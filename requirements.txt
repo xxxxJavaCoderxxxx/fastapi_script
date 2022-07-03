@@ -1,0 +1,5 @@
+SQLAlchemy~=1.4.37
+pydantic~=1.9.1
+fastapi~=0.78.0
+transliterate~=1.10.2
+pytz~=2022.1
