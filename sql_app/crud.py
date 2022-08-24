@@ -9,7 +9,7 @@ def get_item(
         geo_name_id: int
 ) -> Query:
     """
-    Получить населенный пункт (НП).
+    Получить населенный пункт по id (НП).
     :param db это база.
     :param geo_name_id номер НП.
     """
@@ -25,7 +25,7 @@ def get_items(
 ) -> Query:
     """
     Получить населенные пункты (НП).
-    :param db это база.
+    :param db ссесия базы.
     :param page страница.
     :param limit количество НП на странице.
     """
@@ -37,49 +37,33 @@ def get_items(
 def get_count(db: Session) -> int:
     """
     Получить количество записей в БД.
-    :param db это база.
+    :param db ссесия базы.
     """
     return db.query(GeoName).count()
 
 
-def get_cities(
+def get_city_by_name(
         db: Session,
-        first_city: str,
-        second_city: str,
-
-) -> dict:
+        city_name: str,
+) -> Query:
     """
-    Получить населенные пункты по названию.
-    :param db это база.
-    :param first_city город 1.
-    :param second_city город 2.
+    Получить населенный пункт (НП) по названию.
+    :param db сессия базы.
+    :param city_name название НП.
     """
-
-    first_city = db.query(GeoName).filter(
-        GeoName.name == first_city
+    return db.query(GeoName).filter(
+        GeoName.name == city_name
     ).order_by(desc(GeoName.population)).first()
-    second_city = db.query(GeoName).filter(
-        GeoName.name == second_city
-    ).order_by(desc(GeoName.population)).first()
-
-    response = {
-        'firstCity': first_city,
-        'secondCity': second_city
-    }
-    return response
 
 
 def get_help(
         db: Session,
         help_city: str,
-
-) -> dict:
+) -> Query:
     """
-    Получить населенные пункты по названию.
+    Получить предположительные населенные пункты.
+    :param db ссесия базы.
     :param help_city: часть наименования
-    :param db это база.
     """
-    cities = db.query(GeoName.name).filter(
-        GeoName.name.like('{}%'.format(help_city))
-    ).all()
-    return {'cities': list(*zip(*cities))}
+    return db.query(GeoName.name).filter(
+        GeoName.name.like(f'{help_city}%')).all()

@@ -10,30 +10,31 @@ from settings import HOUR
 
 
 class ItemBase(BaseModel):
-    geo_name_id: int
+    geo_name_id: int = Field(alias='geoNameId')
     name: str
-    ascii_name: str
-    alternate_names: str
+    ascii_name: str = Field(alias='asciiName')
+    alternate_names: str = Field(alias='alternateNames')
     latitude: float
     longitude: float
-    feature_class: str
-    feature_code: str
-    country_code: str
-    alt_cc: str
-    admin1_code: str
-    admin2_code: str
-    admin3_code: str
-    admin4_code: str
+    feature_class: str = Field(alias='featureClass')
+    feature_code: str = Field(alias='featureCode')
+    country_code: str = Field(alias='countryCode')
+    alt_cc: str = Field(alias='altCC')
+    admin1_code: str = Field(alias='admin1Code')
+    admin2_code: str = Field(alias='admin2Code')
+    admin3_code: str = Field(alias='admin3Code')
+    admin4_code: str = Field(alias='admin4Code')
     population: int
     elevation: str
     dem: str
     timezone: str
-    modification_date: str
+    modification_date: str = Field(alias='modificationDate')
 
 
 class Item(ItemBase):
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class ResponseModelItems(BaseModel):
@@ -60,12 +61,8 @@ class ResponseModelItems(BaseModel):
 
 
 class ResponseModelCities(BaseModel):
-    firstCity: Item | None = Field(
-        title='Данные населенного пункта 1.'
-    )
-    secondCity: Item | None = Field(
-        title='Данные населенного пункта 2.'
-    )
+    firstCity: Item | None
+    secondCity: Item | None
     northCity: str | None = Field(
         title='Наименование населенного пункта расположенного севернее.'
     )
@@ -75,6 +72,7 @@ class ResponseModelCities(BaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
     @root_validator
     def validate(cls, values):

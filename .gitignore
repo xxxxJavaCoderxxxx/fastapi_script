@@ -1,4 +1,6 @@
 venv/
 .idea
+.vscode
+settings.json
 __pycache__
 sql_app.db

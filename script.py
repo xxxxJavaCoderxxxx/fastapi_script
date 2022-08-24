@@ -5,13 +5,17 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from sqlalchemy.orm import Query, Session
 from transliterate import translit
 
-from settings import tags_metadata
 from sql_app import crud, schemas
 from sql_app.database import SessionLocal
 from sql_app.schemas import ResponseModelItems
 from utils import load_db, pages
 
-app = FastAPI(openapi_tags=tags_metadata)
+app = FastAPI(openapi_tags=[
+    {
+        'name': 'items',
+        'description': 'Manage items.',
+    },
+])
 
 load_db()
 
@@ -76,13 +80,19 @@ def read_cities(
         reversed=True
     )
 
-    db_item = crud.get_cities(
+    first_city = crud.get_city_by_name(
         db,
-        first_city=first_city,
-        second_city=second_city,
+        first_city,
     )
-
-    return db_item
+    second_city = crud.get_city_by_name(
+        db,
+        second_city
+    )
+    response = {
+        'firstCity': first_city,
+        'secondCity': second_city
+    }
+    return response
 
 
 @app.get('/help', response_model=schemas.ResponseModelHelp, tags=['cities'])
@@ -95,8 +105,9 @@ def help_cities(
         'ru',
         reversed=True
     )
-    db_item = crud.get_help(
+    cities = crud.get_help(
         db,
         city
     )
-    return db_item
+    response = {'cities': list(*zip(*cities))}
+    return response
